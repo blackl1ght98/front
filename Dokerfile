@@ -1,0 +1,13 @@
+FROM node:22-slim
+LABEL "language"="nodejs"
+LABEL "framework"="vite"
+WORKDIR /monorepo
+COPY . .
+WORKDIR /monorepo/app
+RUN npm install -g npm@latest && npm install
+RUN npm run build
+FROM zeabur/caddy-static
+LABEL "language"="nodejs"
+LABEL "framework"="vite"
+COPY --from=0 /monorepo/app/dist /usr/share/caddy
+EXPOSE 8080
